@@ -13,7 +13,7 @@ export MAKE_DEBUG_MODE=0 #  1 or 0
 
 export BIN_DIRECTORY=${PWD}/bin
 export BUILD_DIRECTORY=${PWD}/build
-export CMAKE_FLAGS="-DCMAKE_CXX_COMPILER=/usr/bin/g++-4.8"
+#export CMAKE_FLAGS="-DCMAKE_CXX_COMPILER=/usr/bin/g++-4.8"
 export CXX_FLAGS="-Wno-unused-but-set-variable -Wno-unused-variable"
 export C_FLAGS="-std=c99 $CXX_FLAGS"
 
