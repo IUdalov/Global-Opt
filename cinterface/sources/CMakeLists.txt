@@ -5,7 +5,6 @@ project(${PRJ_NAME})
 
 set(CMAKE_CXX_FLAGS "-I/usr/share/R/include -fPIC -Wall -L/usr/lib/R/lib -lR $ENV{CXX_FLAGS}")
 set(CMAKE_C_FLAGS "-I/usr/share/R/include -fPIC -Wall -L/usr/lib/R/lib -lR $ENV{C_FLAGS}")
-#set(SOURCE_LIB interface.c methods.cpp)
 file(GLOB SOURCE_LIB
     "*.cpp"
     "*.c"
