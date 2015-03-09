@@ -4,7 +4,7 @@
 # enviroment variables
 ############################################
 
-export MAKE_DEBUG_MODE=0 #  1 or 0
+export MAKE_DEBUG_MODE=1 #  1 or 0
 
 	####################
 	# Library properties 
