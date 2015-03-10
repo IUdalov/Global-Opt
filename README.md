@@ -1,4 +1,6 @@
 # Global-Opt #
 #### Building ####
- * Use *build.sh* for building project.
-
+ - `cd <path>/Global-Opt`
+ - `mkdir build; cd build` - Create build filder.
+ - `cmake ../cinterface` - Run CMake.
+ - `make` - Done!
