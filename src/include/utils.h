@@ -5,12 +5,9 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include <stdio.h>
-
 // C++
 #include <set>
 #include <map>
-//#include <limits>
 
 //R internals
 #include <R.h>
@@ -57,23 +54,19 @@ public:
     ~RFunction() {
         UNPROTECT(2);
     }
+
     double operator()(double arg) {
         REAL(r_tmp)[0] = arg;
         SETCADR(r_fcall, r_tmp);
         r_tmp = eval(r_fcall, rho);
         return *REAL(r_tmp);
     }
+
+    // convert C double value to SEXP
     SEXP get_double_as_SEXP(double v) {
         REAL(r_tmp)[0] = v;
         return r_tmp;
     }
 };
 
-// DEBUG
-void print_set(const AGPData& d) {
-    printf("###set###:\n");
-    for(AGPData::const_iterator it = d.begin(); it != d.end(); it++) {
-        printf("x: %.15lf Q: %.15lf\n", it->first, it->second);
-    }
-}
 #endif // __UTILS_H__

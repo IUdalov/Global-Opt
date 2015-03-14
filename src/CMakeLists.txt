@@ -1,19 +1,17 @@
-cmake_minimum_required(VERSION 2.8)	   
+cmake_minimum_required(VERSION 2.8)
 
-project(rprj)
+project(global-opt)
 
- #  1 or 0
 set(MAKE_DEBUG_MODE 0)
 
 ####################
 # Library properties 
-set(LIB_PRJ_DIR "${PWD}cinterface")
-set(LIB_PRJ_NAME "opt")
 
-set(BIN_DIRECTORY "${PWD}../bin")
-set(BUILD_DIRECTORY "${PWD}build")
-set(CXX_FLAGS "-Wno-unused-but-set-variable -Wno-unused-variable")
-set(C_FLAGS "-std=c99 $CXX_FLAGS")
+set(LIB_PRJ_NAME "opt")
+set(PWD "$ENV{PWD}")
+
+set(BIN_DIRECTORY "${PWD}")
+set(BUILD_DIRECTORY "${PWD}")
 
 message("--------------------------------------------------")
 message("CMake user config:")
