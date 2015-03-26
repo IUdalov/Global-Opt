@@ -8,8 +8,8 @@ IF(WIN32)
     set(CMAKE_CXX_FLAGS "${CXX_FLAGS}")
     message("Additional dependences are needed!")
 ELSE()
-    set(CMAKE_C_FLAGS "-I/usr/share/R/include -fPIC -Wall -L/usr/lib/R/lib -lR ${C_FLAGS}")
-    set(CMAKE_CXX_FLAGS "-I/usr/share/R/include -fPIC -Wall -L/usr/lib/R/lib -lR ${CXX_FLAGS}")
+    set(CMAKE_C_FLAGS "-O3 -I/usr/share/R/include -fPIC -Wall -Wpedantic -L/usr/lib/R/lib -lR ${C_FLAGS}")
+    set(CMAKE_CXX_FLAGS "-O3 -I/usr/share/R/include -fPIC -Wall -Wpedantic -L/usr/lib/R/lib -lR ${CXX_FLAGS}")
 ENDIF()
 
 file(GLOB SOURCE_LIB

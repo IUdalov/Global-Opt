@@ -1,56 +1,26 @@
 #ifndef __UTILS_H__
 #define __UTILS_H__
 
-// C
-#include <stdlib.h>
-#include <math.h>
-
-// C++
-#include <set>
-#include <map>
-
 //R internals
 #include <R.h>
 #include <Rinternals.h>
 
+// константа близкая к нулю, для сравнения double с нулём
 const double MAGIC_SMALL_NUMBER = 0.00000001;
 
-// key: x, Q
-typedef std::set< std::pair< double, double > > AGPData;
-
-// key: x value: pair<Q, R>
-typedef std::map< double, std::pair< double, double > > BLData;
-
-inline void insert(BLData& data, double x, double Q, double R = DBL_MAX) {
-    data[x] = std::make_pair(Q, R);
-}
-
-// AGP ------------------------------------------------------------------------
-inline double agp_xi(double xi, double xi1, double Qi, double Qi1, double lip) {
-    return 0.5 * (xi1 + xi) - (Qi1 - Qi) / (2 * lip);
-}
-
-inline double agp_Ri(double xi, double xi1, double Qi, double Qi1, double lip) {
-    return lip * (xi1 - xi) + pow(Qi1 - Qi,2) / (lip * (xi1 - xi)) - 2 * (Qi1 + Qi);
-}
-
-// PIYAVSKY -------------------------------------------------------------------
-inline double piyavsky_xi(double xi, double xi1, double Qi, double Qi1, double lip) {
-    return 0.5 * (xi1 + xi) - (Qi1 - Qi) / (2 * lip);
-}
-
-double piyavsky_Ri(double xi, double xi1, double Qi, double Qi1, double lip) {
-    return (Qi1 - Qi) / (2 * lip) - (xi1 + xi) / 2;
-}
-
+// класс, обёртка над R функцией
 class RFunction {
 private:
-    SEXP r_fcall, r_tmp, rho;
+    SEXP r_fcall;   // "дескриптор" функции на R
+    SEXP r_tmp;     // перменная R, аргумент - значение функции
+    SEXP rho;       // 
 public:
-    RFunction(SEXP r_func, SEXP _rho) : rho(_rho) {
+    RFunction(SEXP r_func, SEXP _rho)
+            : rho(_rho) {
         r_fcall = PROTECT(lang2(r_func, R_NilValue));
         r_tmp   = PROTECT(allocVector(REALSXP, 1));
     }
+
     ~RFunction() {
         UNPROTECT(2);
     }

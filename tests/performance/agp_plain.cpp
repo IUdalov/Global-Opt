@@ -1,31 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <limits>
 #include <set>
-#include "methods.h"
-#include "utils.h"
-#include "stdio.h"
 
-// включить дебаг
-//#define DEBUG
+const double MAGIC_SMALL_NUMBER = 0.00000001;
+const double DBL_MAX = std::numeric_limits<double>::max();
+const double DBL_MIN = std::numeric_limits<double>::min();
 
-// Набор точек, в которых происхоило измерение функии 
-// <аргумент, значение>
+volatile double func(double x) {
+    return sin(4 * x) + 2 * cos(x) + 0.01 * pow((x - 0.1), 2);
+}
+
 typedef std::set< std::pair< double, double > > Points;
 
-static inline double agp_xi(double xi, double xi1, double Qi, double Qi1, double lip) {
+bool parse_args(int argc, char* argv[], double& left, double& right, double& eps, double& r) {
+    if (argc < 3) { return false; }
+    left = atof(argv[1]);
+    right = atof(argv[2]);
+    if (right < left) { return false; }
+    if (argc > 3) { eps = atof(argv[3]); }
+    if (argc > 4) {
+        r = atof(argv[4]);
+    }
+    if (argc > 5) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+void print_usage(char* progname) {
+    printf("Usage: %s <left limit> <right limit> [<eps>] [<r>]\n", progname);
+    printf("    Left limit must be greater than right limit.\n");
+    printf("    r >= 1\n");
+}
+
+// AGP ------------------------------------------------------------------------
+inline double agp_xi(double xi, double xi1, double Qi, double Qi1, double lip) {
     return 0.5 * (xi1 + xi) - (Qi1 - Qi) / (2 * lip);
 }
 
-static inline double agp_Ri(double xi, double xi1, double Qi, double Qi1, double lip) {
+inline double agp_Ri(double xi, double xi1, double Qi, double Qi1, double lip) {
     return lip * (xi1 - xi) + pow(Qi1 - Qi, 2) / (lip * (xi1 - xi)) - 2 * (Qi1 + Qi);
 }
-
-#ifdef DEBUG
-void print_points(const Points& points) {
-    for(Points::const_iterator it = points.begin(); it != points.end(); it++) {
-        printf("x: %.7lf Q: %.7lf\n", it->first, it->second);
-    }
-    printf("Total points: %u\n", points.size());
-}
-#endif
 
 static  double recalc_lip(const Points& d, double r) {
     double l = DBL_MIN;
@@ -73,25 +91,15 @@ static void update_data(const Points& d, double& new_x, double& x_diff, double l
 
 static double get_global_min(const Points& d) {
     double Q_min = DBL_MAX;
-    double x_min = 0;
+    double x_min;
     for(Points::const_iterator it = d.begin(); it != d.end(); it++) {
         if (it->second < Q_min) {x_min = it->first; Q_min = it->second;}
     }
     return x_min;
 }
 
-SEXP agp_search_unsafe(SEXP r_func, SEXP r_left, SEXP r_right, SEXP r_eps, SEXP r_r, SEXP rho) {
-
-    RFunction func(r_func, rho);
-    double left  = *REAL(r_left);
-    double right = *REAL(r_right);
-    double eps   = *REAL(r_eps);
-    double r     = *REAL(r_r);
+double agp_serach(double left, double right, double eps, double r) {
     double lip = r;
-
-#ifdef DEBUG
-    printf("left: %.7lf\nright: %.7lf\n eps: %.7lf\n r: %.7lf\n", left, right, eps, r);
-#endif
 
     Points data;
     data.insert(std::make_pair(left, func(left)));
@@ -104,14 +112,23 @@ SEXP agp_search_unsafe(SEXP r_func, SEXP r_left, SEXP r_right, SEXP r_eps, SEXP 
         data.insert(std::make_pair(new_x, func(new_x)));
         lip = recalc_lip(data, r);
         update_data(data, new_x, x_diff, lip);
-#ifdef DEBUG
-            printf("new_x: %.7lf\n", new_x);
-#endif
     }
 
-#ifdef DEBUG
-    print_points(data);
-#endif
+    return get_global_min(data);
+}
 
-    return func.get_double_as_SEXP(get_global_min(data));
+int main(int argc, char* argv[]) {
+    double left = 0;
+    double right = 1;
+    double eps = 0.001;
+    double r = 1.5;
+
+    if (!parse_args(argc, argv, left, right, eps, r)) {
+        print_usage(argv[0]);
+        return 0;
+    }
+
+    //printf(" left: %.8lf\nright: %.8lf\n  eps: %.8lf\n    r: %.8lf\n", left, right, eps, r);
+    printf("Global minimun at %.15lf\n", agp_serach(left, right, eps, r));
+    return 0;
 }
