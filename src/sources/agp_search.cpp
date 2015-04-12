@@ -49,7 +49,7 @@ static  double recalc_lip(const Points& d, double r) {
 
 static void update_data(const Points& d, double& new_x, double& x_diff, double lip) {
     double R_max = -1000; //TOREMOVE
-    double x_tmp, x1_tmp, Q_tmp, Q1_tmp;
+    double x_tmp = 0, x1_tmp = 0, Q_tmp = 0, Q1_tmp = 0;
     for(Points::const_iterator it = d.begin(); it != --d.end(); /*empty*/) {
         double x = it->first;
         double Q = it-> second;

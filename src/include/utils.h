@@ -8,12 +8,15 @@
 // константа близкая к нулю, для сравнения double с нулём
 const double MAGIC_SMALL_NUMBER = 0.00000001;
 
-// класс, обёртка над R функцией
+//typedef std::vector< double > rvector;
+
+// класс, обёртка над R функцией принимающей double и возвращающей bouble
 class RFunction {
 private:
     SEXP r_fcall;   // "дескриптор" функции на R
     SEXP r_tmp;     // перменная R, аргумент - значение функции
     SEXP rho;       // 
+
 public:
     RFunction(SEXP r_func, SEXP _rho)
             : rho(_rho) {
@@ -37,6 +40,25 @@ public:
         REAL(r_tmp)[0] = v;
         return r_tmp;
     }
+};
+
+class RNFunction {
+private:
+    SEXP r_fcall;
+    SEXP rho;
+
+public:
+    RNFunction(SEXP r_func, SEXP _rho)
+        : rho(_rho) {
+
+    }
+    ~RNFunction() {
+    }
+
+    double operator()() {
+        return 0;
+    }
+
 };
 
 #endif // __UTILS_H__

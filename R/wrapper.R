@@ -10,3 +10,7 @@ agp_search <- function(func, left, right, eps=0.001, r = 1.5) {
     }
     return(.Call("agp_search",func, left, right, eps, r, new.env()))
 }
+
+agp_search_n <- function(func, left = 0, right = 1) {
+    return(.Call("agp_search_n", func, left, right, new.env()))
+}
