@@ -5,10 +5,12 @@
 #include <R.h>
 #include <Rinternals.h>
 
+
+// включить дебаг
+//#define DEBUG
+
 // константа близкая к нулю, для сравнения double с нулём
 const double MAGIC_SMALL_NUMBER = 0.00000001;
-
-//typedef std::vector< double > rvector;
 
 // класс, обёртка над R функцией принимающей double и возвращающей bouble
 class RFunction {
@@ -44,21 +46,34 @@ public:
 
 class RNFunction {
 private:
+    int N;
     SEXP r_fcall;
     SEXP rho;
+    SEXP r_arg;
+    SEXP r_result;
 
 public:
-    RNFunction(SEXP r_func, SEXP _rho)
+    RNFunction(SEXP r_func, SEXP r_N, SEXP _rho)
         : rho(_rho) {
-
+        N = *INTEGER(r_N);
+        r_fcall     = PROTECT(lang2(r_func, R_NilValue));
+        r_arg       = PROTECT(allocVector(REALSXP, N));
+        r_result    = PROTECT(allocVector(REALSXP, 1));
     }
     ~RNFunction() {
+        UNPROTECT(3);
     }
 
-    double operator()() {
-        return 0;
-    }
+    double operator()(const double *x) {
+        for(int i = 0; i < N; i++) {
+            REAL(r_arg)[i] = x[i];
+        }
 
+        SETCADR(r_fcall, r_arg);
+        r_result = eval(r_fcall, rho);
+        return *REAL(r_result);
+    }
 };
+
 
 #endif // __UTILS_H__

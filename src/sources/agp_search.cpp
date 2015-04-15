@@ -3,9 +3,6 @@
 #include "utils.h"
 #include "stdio.h"
 
-// включить дебаг
-//#define DEBUG
-
 // Набор точек, в которых происхоило измерение функии 
 // <аргумент, значение>
 typedef std::set< std::pair< double, double > > Points;
